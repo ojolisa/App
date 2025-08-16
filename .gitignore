@@ -1,0 +1,141 @@
+# === General OS ===
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon?
+Desktop.ini
+*.stackdump
+
+# === Editors/IDEs ===
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.iml
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.history
+*.code-workspace
+
+# === Logs ===
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# === Node / JavaScript (frontend & backend) ===
+node_modules/
+.eslintcache
+.stylelintcache
+
+# Package manager caches & Plug'n'Play
+.pnpm-store/
+.pnp.*
+.pnp.js
+
+# Yarn 2+ (Berry) - keep recommended subfolders if used
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+
+# === Build / Output ===
+dist/
+dist-ssr/
+.vite/
+.cache/
+coverage/
+.nyc_output/
+*.tsbuildinfo
+
+# === Environment files (keep examples) ===
+.env
+.env.*
+!.env.example
+!.env.local.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+.python-version
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Packaging / build artifacts
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+
+# Test & tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.ipynb_checkpoints
+
+# === ML / Data artifacts ===
+data/
+datasets/
+outputs/
+models/
+checkpoints/
+runs/
+logs/
+wandb/
+lightning_logs/
+mlruns/
+
+# Common ML model/binary formats (avoid committing large files)
+*.ckpt
+*.pth
+*.pt
+*.h5
+*.onnx
+*.pb
+*.tflite
+
+# Allowlist a specific tracked model file (remove this line if you don't want it tracked)
+!model_inference/discriminator_cnn.pth
+
+# === Temp files ===
+.tmp/
+.temp/
+tmp/
+temp/
