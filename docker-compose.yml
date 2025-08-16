@@ -1,0 +1,34 @@
+services:
+  inference:
+    build:
+      context: ./model_inference
+    image: app-inference:latest
+    container_name: app_inference
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+    image: app-backend:latest
+    container_name: app_backend
+    environment:
+      - PORT=4000
+      - FLASK_URL=http://inference:3000
+    depends_on:
+      - inference
+    ports:
+      - "4000:4000"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    image: app-frontend:latest
+    container_name: app_frontend
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
+    restart: unless-stopped

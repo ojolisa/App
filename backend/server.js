@@ -7,7 +7,7 @@ const axios = require('axios');
 const FormData = require('form-data');
 
 const app = express();
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 25 * 1024 * 1024 } });
 
 // Config
 const PORT = process.env.PORT || 4000;
@@ -38,6 +38,10 @@ app.post('/predict', upload.single('file'), async (req, res) => {
 
     res.status(flaskResp.status).json(flaskResp.data);
   } catch (err) {
+    // Multer size limit error
+    if (err && err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(413).json({ error: 'File too large', details: 'Max upload size is 25MB' });
+    }
     if (err.response) {
       return res.status(err.response.status).json({ error: 'Flask error', details: err.response.data });
     }
