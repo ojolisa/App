@@ -18,8 +18,8 @@ function App() {
   const validateFile = useCallback((f) => {
     if (!f) return { ok: false, message: 'No file selected' }
     if (!f.type.startsWith('image/')) return { ok: false, message: 'Please select an image file' }
-    const maxBytes = 5 * 1024 * 1024 // 5MB
-    if (f.size > maxBytes) return { ok: false, message: 'Image must be 5MB or smaller' }
+    const maxBytes = 25 * 1024 * 1024 // 25MB
+    if (f.size > maxBytes) return { ok: false, message: 'Image must be 25MB or smaller' }
     return { ok: true }
   }, [])
 
