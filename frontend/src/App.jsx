@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState, useCallback } from 'react'
 import './App.css'
 
 function App() {
@@ -13,9 +13,17 @@ function App() {
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
   const inputRef = useRef(null)
+  const [dragActive, setDragActive] = useState(false)
 
-  function onPickFile(e) {
-    const f = e.target.files?.[0]
+  const validateFile = useCallback((f) => {
+    if (!f) return { ok: false, message: 'No file selected' }
+    if (!f.type.startsWith('image/')) return { ok: false, message: 'Please select an image file' }
+    const maxBytes = 5 * 1024 * 1024 // 5MB
+    if (f.size > maxBytes) return { ok: false, message: 'Image must be 5MB or smaller' }
+    return { ok: true }
+  }, [])
+
+  function setChosenFile(f) {
     setResult(null)
     setError('')
     if (!f) {
@@ -24,9 +32,19 @@ function App() {
       setPreviewUrl('')
       return
     }
+    const valid = validateFile(f)
+    if (!valid.ok) {
+      setError(valid.message)
+      return
+    }
     setFile(f)
     if (previewUrl) URL.revokeObjectURL(previewUrl)
     setPreviewUrl(URL.createObjectURL(f))
+  }
+
+  function onPickFile(e) {
+    const f = e.target.files?.[0]
+    setChosenFile(f)
   }
 
   async function onSubmit(e) {
@@ -64,30 +82,63 @@ function App() {
     inputRef.current?.value && (inputRef.current.value = '')
   }
 
-  return (
-    <div>
-      <h1>Image Classification</h1>
-      <p className="read-the-docs">Upload an image to check if it's REAL or FAKE.</p>
+  const onDragOver = useCallback((e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(true)
+  }, [])
 
-      <form onSubmit={onSubmit} className="card" style={{ display: 'grid', gap: 12 }}>
-        <input
-          ref={inputRef}
-          type="file"
-          accept="image/*"
-          onChange={onPickFile}
-        />
-        {previewUrl && (
+  const onDragLeave = useCallback((e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(false)
+  }, [])
+
+  const onDrop = useCallback((e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(false)
+    const f = e.dataTransfer.files?.[0]
+    setChosenFile(f)
+  }, [])
+
+  return (
+    <div className="container">
+      <header className="header">
+        <h1>Image Authenticity Checker</h1>
+        <p className="muted">Upload or drop an image to classify it as Real or Fake.</p>
+      </header>
+
+      <form onSubmit={onSubmit} className="panel">
+        <label
+          className={`dropzone ${dragActive ? 'drag' : ''}`}
+          onDragOver={onDragOver}
+          onDragEnter={onDragOver}
+          onDragLeave={onDragLeave}
+          onDrop={onDrop}
+        >
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/*"
+            onChange={onPickFile}
+            style={{ display: 'none' }}
+          />
           <div>
-            <img
-              src={previewUrl}
-              alt="preview"
-              style={{ maxWidth: 320, maxHeight: 320, borderRadius: 8, border: '1px solid #333' }}
-            />
+            <div className="dz-title">Drag & drop image here</div>
+            <div className="dz-sub">or click to browse</div>
+            {file && <div className="file-name">{file.name}</div>}
+          </div>
+        </label>
+
+        {previewUrl && (
+          <div className="preview">
+            <img src={previewUrl} alt="Selected preview" />
           </div>
         )}
 
-        <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
-          <button type="submit" disabled={!file || loading}>
+        <div className="actions">
+          <button type="submit" disabled={!file || loading} className="primary">
             {loading ? 'Predicting…' : 'Predict'}
           </button>
           <button type="button" onClick={reset} disabled={loading && !file}>
@@ -97,28 +148,26 @@ function App() {
       </form>
 
       {error && (
-        <div style={{ color: '#f66', marginTop: 12 }}>
-          Error: {error}
+        <div className="alert error" role="alert">
+          {error}
         </div>
       )}
 
       {result && (
-        <div className="card" style={{ marginTop: 12 }}>
-          <h2>Prediction</h2>
-          <p>
-            <strong>Label:</strong> {result.prediction}
-          </p>
-          {'confidence' in result && (
-            <p>
-              <strong>Confidence:</strong> {(result.confidence * 100).toFixed(2)}%
-            </p>
-          )}
-        </div>
+        <section className="panel">
+          <h2 className="section-title">Prediction</h2>
+          <div className="result">
+            <span className={`badge ${String(result.prediction).toLowerCase()}`}>{result.prediction}</span>
+            {'confidence' in result && (
+              <span className="confidence">{(result.confidence * 100).toFixed(2)}% confidence</span>
+            )}
+          </div>
+        </section>
       )}
 
-      <p style={{ marginTop: 24, fontSize: 12, color: '#888' }}>
-        Backend: {API_BASE}
-      </p>
+      <footer className="footer">
+        <span className="muted">Backend: {API_BASE}</span>
+      </footer>
     </div>
   )
 }
