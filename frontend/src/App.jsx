@@ -154,7 +154,7 @@ function App() {
 
       {error && (
         <div className="alert error" role="alert">
-          {error}
+          {error + " "}
           Visit{" "}
           <a href="https://model-inference.onrender.com" target="_blank">
             https://model-inference.onrender.com
