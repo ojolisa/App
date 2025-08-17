@@ -71,9 +71,8 @@ function App() {
       setResult(data);
     } catch (err) {
       setError(
-        err?.message ||
-          "Unexpected error" +
-            ' Visit <a href="https://model-inference.onrender.com" target="_blank">https://model-inference.onrender.com</a> and wait for the inference server to restart.'
+        <span>{err?.message || "Unexpected error"}</span> +
+          ' Visit <a href="https://model-inference.onrender.com" target="_blank">https://model-inference.onrender.com</a> and wait for the inference server to restart.'
       );
     } finally {
       setLoading(false);
